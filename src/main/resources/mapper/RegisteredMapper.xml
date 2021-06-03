@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clh.mapper.RegisteredMapper">
+
+    <select id="add_registered" resultType="com.clh.entity.Registered">
+insert into registered_user (name_id,name,old,sex,id_car,department,phone,time) values(#{name_id},#{name},#{old},#{sex},#{id_car},#{department},#{phone},#{time})
+    </select>
+
+</mapper>

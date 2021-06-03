@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.clh.mapper.DoctorJsMapper" >
+    <resultMap id="doctorManagementMap" type="com.clh.entity.DoctorJs">
+        <result column="doctor_name" property="doctor_name" jdbcType="VARCHAR" />
+        <result column="count" property="count" jdbcType="VARCHAR" />
+        <collection property="registerDocJs" ofType="com.clh.entity.RegisterDocJs">
+            <result column="doctor_id" property="doctor_id" jdbcType="VARCHAR" />
+        </collection>
+    </resultMap>
+
+    <select id="doctorJs" resultMap="doctorManagementMap">
+select d.doctor_name as doctor_name ,count(d.doctor_id) as count,r.doctor_id as doctor_id  from doctor d inner join register_doc  r on d.doctor_id =r.doctor_id GROUP BY d.doctor_id;
+    </select>
+
+        <resultMap id="doctorkeshiMap" type="com.clh.entity.DepartmentJs">
+            <result column="department_name" property="department_name" jdbcType="VARCHAR" />
+            <result column="count" property="count" jdbcType="VARCHAR" />
+
+            <collection property="doctorJss" ofType="com.clh.entity.DoctorJss">
+                <result column="doctor_name" property="doctor_name" jdbcType="VARCHAR" />
+
+                <collection property="registerDocJs" ofType="com.clh.entity.RegisterDocJs">
+                    <result column="doctor_id" property="doctor_id" jdbcType="VARCHAR" />
+                </collection>
+
+            </collection>
+        </resultMap>
+
+    <select id="keshi" resultMap="doctorkeshiMap">
+select  dt.department_name as department_name,count(r.doctor_id) as count,d.doctor_name,r.doctor_id from department dt inner join doctor d on dt.department_id=d.department_id inner join register_doc  r on d.doctor_id =r.doctor_id
+GROUP BY dt.department_name;
+    </select>
+
+    <resultMap id="bedMap" type="com.clh.entity.BedJs">
+        <result column="live" property="live" jdbcType="VARCHAR" />
+        <result column="free" property="free" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="bed" resultMap="bedMap">
+select sum(bed.bed_stat="0") as live, sum(bed_stat="1") as free   from bed;
+    </select>
+
+    <resultMap id="patientMap" type="com.clh.entity.PatientJs">
+        <result column="eag_layer" property="eag_layer" jdbcType="VARCHAR" />
+        <result column="emps" property="emps" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="patient" resultMap="patientMap">
+        SELECT
+            CASE
+                WHEN (patient_age &lt;= 6) THEN
+                    '0-6'
+                WHEN (patient_age >= 7 AND patient_age &lt;= 17) THEN
+                    '7-17'
+                WHEN (patient_age >= 18 AND patient_age &lt;= 40) THEN
+                    '18-40'
+                WHEN (patient_age >= 41 AND patient_age &lt;= 65) THEN
+                    '41-65'
+                ELSE
+                    '66-'
+                END 'eag_layer',
+            count(*) emps
+        FROM
+            patient
+        GROUP BY
+            CASE
+                WHEN (patient_age &lt;= 6) THEN
+                    '0-6'
+                WHEN (patient_age >= 7 AND patient_age &lt;= 17) THEN
+                    '7-17'
+                WHEN (patient_age >= 18 AND patient_age &lt;= 40) THEN
+                    '18-40'
+                WHEN (patient_age >= 41 AND patient_age &lt;= 65) THEN
+                    '41-65'
+                ELSE
+                    '66-'
+                END
+        ORDER BY
+            1 ;
+    </select>
+
+    <resultMap id="pvMap" type="com.clh.entity.Pv">
+        <result column="time" property="time" jdbcType="VARCHAR" />
+        <result column="count" property="count" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="pv" resultMap="pvMap">
+select substring(time,12) as time,count from pv;
+    </select>
+
+    <resultMap id="uvMap" type="com.clh.entity.Uv">
+        <result column="time" property="time" jdbcType="VARCHAR" />
+        <result column="count" property="count" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="uv" resultMap="uvMap">
+select substring(time,12) as time,count from uv;
+    </select>
+
+</mapper>
